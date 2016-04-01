@@ -32,9 +32,29 @@ def _get_passed_configfile():
     (args, _) = parser.parse_known_args()
     return args.config
 
+_COPY_PROMPT = """The file
 
-def _get_configfile(name):
-    return (CONFIG_DIR / "{}.json".format(name)).open("r")
+{file}
+
+does not exist, create it? [yN]"""
+
+def _prompt_copy_config(name, e):
+    response = input(_COPY_PROMPT.format(file = e.filename))
+    if response.lower() == "y":
+        with _get_configfile(name, mode = "w") as configfile:
+            json.dump({}, configfile)
+        return True
+    return False
+
+def _get_configfile(name, mode = "r"):
+    try:
+        return (CONFIG_DIR / "{}.json".format(name)).open(mode)
+    except FileNotFoundError as e:
+        print(e)
+        if _prompt_copy_config(name, e):
+            return _get_configfile(name)
+        else:
+            raise
 
 
 def get_config(name, base = None, argparse_configfile = True):
