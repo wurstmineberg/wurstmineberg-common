@@ -11,6 +11,13 @@ CONFIG_DIR = pathlib.Path(os.getenv("WURSTMINEBERG_CONFIG_DIR",
                                     default = DEFAULT_CONFIG_DIR))
 
 
+_COPY_PROMPT = """The file
+
+{file}
+
+does not exist, create it? [yN]"""
+
+
 def _from_file(configfile):
     with configfile:
         return json.load(configfile)
@@ -32,19 +39,18 @@ def _get_passed_configfile():
     (args, _) = parser.parse_known_args()
     return args.config
 
-_COPY_PROMPT = """The file
-
-{file}
-
-does not exist, create it? [yN]"""
 
 def _prompt_copy_config(name, e):
+    import sys
+    if not sys.__stdin__.isatty():
+        return False
     response = input(_COPY_PROMPT.format(file = e.filename))
     if response.lower() == "y":
         with _get_configfile(name, mode = "w") as configfile:
             json.dump({}, configfile)
         return True
     return False
+
 
 def _get_configfile(name, mode = "r"):
     try:
