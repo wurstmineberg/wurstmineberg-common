@@ -68,8 +68,7 @@ def _apply_value_types(config, value_types):
     # If a type for a key is defined, convert to that type (otherwise apply the
     # identity function (ie do nothing)).
     # Mainly useful for things like paths that don't have a JSON representation
-    print(value_types)
-    return { key: value_types.get(key, lambda x: x)(value) for key, value in value_types.items() }
+    return { key: value_types.get(key, lambda x: x)(value) for key, value in config.items() }
 
 
 def get_config(name, base = None, argparse_configfile = True, value_types = None):
