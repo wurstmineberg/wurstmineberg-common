@@ -1,2 +1,2 @@
-# wurstmineberg-common
-Common functionality for Wurstmineberg infrastructure
+# wurstmineberg-common-python
+Common functionality for Wurstmineberg python infrastructure
