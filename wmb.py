@@ -85,7 +85,8 @@ def _apply_value_types(config, value_types):
     return { key: value_types.get(key, lambda x: x)(value) for key, value in config.items() }
 
 
-def _json_recursive_merge(*json_values):
+def _json_recursive_merge(json_values):
+    json_values = iter(json_values)
     try:
         first = next(json_values)
     except StopIteration:
@@ -118,7 +119,7 @@ def get_config(name, base = None, argparse_configfile = True, value_types = None
         configfile = passed_configfile
 
     if not configfile is None:
-        config = _json_recursive_merge(_from_file(configfile), config)
+        config = _json_recursive_merge((_from_file(configfile), config))
 
     if not value_types is None:
         config = _apply_value_types(config, value_types)
