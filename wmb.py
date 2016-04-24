@@ -67,11 +67,11 @@ def _get_configfile(name, mode = "r"):
     try:
         return (CONFIG_DIR / "{}.json".format(name)).open(mode)
     except FileNotFoundError as e:
-        print(e)
+        #print(e)
         if _prompt_copy_config(name, e):
             return _get_configfile(name)
         else:
-            raise
+            return {}
 
 
 def _apply_value_types(config, value_types):
@@ -80,6 +80,7 @@ def _apply_value_types(config, value_types):
     # identity function (ie do nothing)).
     # Mainly useful for things like paths that don't have a JSON representation
     return { key: value_types.get(key, lambda x: x)(value) for key, value in config.items() }
+
 
 def json_recursive_merge(*json_values):
     try:
@@ -96,6 +97,7 @@ def json_recursive_merge(*json_values):
         return {k: json_recursive_merge(value[k] for value in objects_prefix if isinstance(value, dict) and k in value) for k in set.union(*(set(d.keys()) for d in objects_prefix))}
     else:
         return first
+
 
 def get_config(name, base = None, argparse_configfile = True, value_types = None):
     if is_dev():
