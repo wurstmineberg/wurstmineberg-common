@@ -19,7 +19,14 @@ does not exist, create it? [yN]"""
 
 
 def is_dev():
-    return "WURSTMINEBERG_IS_DEV" in os.environ
+    #prefer to read env over importing uwsgi
+    if "WURSTMINEBERG_IS_DEV" in os.environ:
+        return True
+    try:
+        import uwsgi
+        return uwsgi.opt['is_dev'] == 'true' or uwsgi.opt['is_dev'] == b'true'
+    except:
+        return False
 
 
 def _from_file(configfile):
