@@ -18,6 +18,10 @@ _COPY_PROMPT = """The file
 does not exist, create it? [yN]"""
 
 
+def is_dev():
+    return "WURSTMINEBERG_IS_DEV" in os.environ
+
+
 def _from_file(configfile):
     with configfile:
         return json.load(configfile)
