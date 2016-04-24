@@ -19,6 +19,9 @@ does not exist, create it? [yN]"""
 
 
 def is_dev():
+    """
+Are we using a dev instance?
+    """
     #prefer to read env over importing uwsgi
     if "WURSTMINEBERG_IS_DEV" in os.environ:
         return True
