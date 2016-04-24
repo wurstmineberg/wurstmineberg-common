@@ -74,7 +74,7 @@ def _get_configfile(name, mode = "r"):
         if _prompt_copy_config(name, e):
             return _get_configfile(name)
         else:
-            return {}
+            return None
 
 
 def _apply_value_types(config, value_types):
@@ -117,7 +117,8 @@ def get_config(name, base = None, argparse_configfile = True, value_types = None
     else:
         configfile = passed_configfile
 
-    config = _json_recursive_merge(_from_file(configfile), config)
+    if not configfile is None:
+        config = _json_recursive_merge(_from_file(configfile), config)
 
     if not value_types is None:
         config = _apply_value_types(config, value_types)
