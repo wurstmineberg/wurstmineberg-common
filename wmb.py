@@ -91,6 +91,9 @@ def json_recursive_merge(*json_values):
         return first
 
 def get_config(name, base = None, argparse_configfile = True, value_types = None):
+    if is_dev():
+        name = "{}.dev".format(name)
+
     config = _get_base_config(name, base)
 
     passed_configfile = None
