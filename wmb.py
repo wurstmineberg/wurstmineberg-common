@@ -70,6 +70,21 @@ def _apply_value_types(config, value_types):
     # Mainly useful for things like paths that don't have a JSON representation
     return { key: value_types.get(key, lambda x: x)(value) for key, value in config.items() }
 
+def json_recursive_merge(*json_values):
+    try:
+        first = next(json_values)
+    except StopIteration:
+        return None
+    if isinstance(first, dict):
+        objects_prefix = [first]
+        for value in json_values:
+            if isinstance(value, dict):
+                objects_prefix.append(value)
+            else:
+                break
+        return {k: json_recursive_merge(value[k] for value in objects_prefix if isinstance(value, dict) and k in value) for k in set.union(*(set(d.keys()) for d in objects_prefix))}
+    else:
+        return first
 
 def get_config(name, base = None, argparse_configfile = True, value_types = None):
     config = _get_base_config(name, base)
@@ -83,7 +98,7 @@ def get_config(name, base = None, argparse_configfile = True, value_types = None
     else:
         configfile = passed_configfile
 
-    config.update(_from_file(configfile))
+    config = json_recursive_merge(_from_file(configfile), config)
 
     if not value_types is None:
         config = _apply_value_types(config, value_types)
@@ -99,5 +114,3 @@ def from_assets(script_file):
 if __name__ == "__main__":
     print(get_config("example"))
     print(get_config("example", base = from_assets(__file__), argparse_configfile = False))
-    
-
